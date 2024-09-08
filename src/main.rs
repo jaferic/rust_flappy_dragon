@@ -20,7 +20,6 @@ impl State {
         //TODO Fill in this later
         self.mode = GameMode::End;
     }
-
     fn restart(&mut self) {
         self.mode = GameMode::Playing;
     }
@@ -41,7 +40,16 @@ impl State {
 
     fn end(&mut self, ctx: &mut BTerm) {
         ctx.cls();
-        ctx.quit();
+        ctx.print_centered(5, "You have died!!!!");
+        ctx.print_centered(8, "(P) Play Again");
+        ctx.print_centered(9, "(Q) Quit Game");
+        if let Some(key) = ctx.key {
+            match key {
+                VirtualKeyCode::P => self.restart(),
+                VirtualKeyCode::Q => ctx.quitting = true,
+                _ => {}
+            }
+        }
     }
 }
 
@@ -49,7 +57,7 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         match self.mode {
             GameMode::Menu => self.menu(ctx),
-            GameMode::Playing => self.play(ctx),
+            GameMode::Playing => self.playing(ctx),
             GameMode::End => self.end(ctx),
         }
     }
